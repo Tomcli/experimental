@@ -19,6 +19,11 @@ package cel
 import (
 	"context"
 	"fmt"
+	"regexp"
+	"strconv"
+	"strings"
+
+	"github.com/coreos/rkt/tests/testutils/logger"
 	"github.com/google/cel-go/cel"
 	"github.com/google/cel-go/common/types"
 	"github.com/tektoncd/pipeline/pkg/client/injection/reconciler/pipeline/v1alpha1/run"
@@ -95,8 +100,10 @@ func (r *Reconciler) ReconcileKind(ctx context.Context, run *v1alpha1.Run) recon
 
 	var runResults []v1alpha1.RunResult
 	for _, param := range run.Spec.Params {
+		// Check whether the expression contains C lang double, if so try to convert the other type to double as well
+		celExpression := unifyDoubleType(param.Value.StringVal)
 		// Combine the Parse and Check phases CEL program compilation to produce an Ast and associated issues
-		ast, iss := env.Compile(param.Value.StringVal)
+		ast, iss := env.Compile(celExpression)
 		if iss.Err() != nil {
 			logger.Errorf("CEL expression %s could not be parsed when reconciling Run %s/%s: %v", param.Name, run.Namespace, run.Name, iss.Err())
 			run.Status.MarkRunFailed(ReasonSyntaxError,
@@ -159,4 +166,33 @@ func validateExpressionsType(run *v1alpha1.Run) (errs *apis.FieldError) {
 		}
 	}
 	return errs
+}
+
+func unifyDoubleType(StringVal string) string {
+	s := strings.Split(strings.TrimSpace(StringVal), " ")
+	var validDouble = regexp.MustCompile(`[0-9]+.[0-9]+$`)
+	// only convert to double type when it's a 3 word expression e.g. (x > y)
+	if len(s) == 3 {
+		// only convert when only one of the arguments is double.
+		if validDouble.MatchString(s[0]) != validDouble.MatchString(s[2]) {
+			if !validDouble.MatchString(s[0]) {
+				s[0] = toDoubleString(s[0])
+			}
+			if !validDouble.MatchString(s[2]) {
+				s[2] = toDoubleString(s[2])
+			}
+		}
+	}
+	return strings.Join(s, " ")
+}
+
+func toDoubleString(s string) string {
+	// make sure the string is a vaild number, if not return the input string
+	f, err := strconv.ParseFloat(s, 64)
+	if err != nil {
+		logger.Errorf("Cannot convert %s to double: %v", s, err)
+		return s
+	}
+	doubleString := strconv.FormatFloat(f, 'f', -1, 64) + ".0"
+	return doubleString
 }

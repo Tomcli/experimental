@@ -3,14 +3,17 @@ module github.com/tektoncd/experimental/cel
 go 1.15
 
 require (
-	github.com/google/cel-go v0.7.0
+	github.com/coreos/rkt v1.30.0
+	github.com/fsnotify/fsnotify v1.4.9 // indirect
+	github.com/google/cel-go v0.7.2
 	github.com/google/go-cmp v0.5.4
-	github.com/tektoncd/pipeline v0.20.0
+	github.com/tektoncd/pipeline v0.21.0
 	go.uber.org/zap v1.16.0
 	k8s.io/api v0.20.2
-	k8s.io/apimachinery v0.18.12
+	k8s.io/apimachinery v0.19.7
 	k8s.io/client-go v11.0.1-0.20190805182717-6502b5e7b1b5+incompatible
-	knative.dev/pkg v0.0.0-20210114223020-f0ea5e6b9c4e
+	knative.dev/pkg v0.0.0-20210127163530-0d31134d5f4e
+	sigs.k8s.io/structured-merge-diff/v3 v3.0.1-0.20200706213357-43c19bbb7fba // indirect
 )
 
 // Knative deps

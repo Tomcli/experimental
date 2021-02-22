@@ -19,12 +19,17 @@ package cel
 import (
 	"context"
 	"fmt"
+
 	"github.com/google/go-cmp/cmp"
 	"github.com/tektoncd/experimental/cel/test"
 	"github.com/tektoncd/pipeline/pkg/apis/pipeline/v1alpha1"
 	"github.com/tektoncd/pipeline/pkg/apis/pipeline/v1beta1"
 	ttesting "github.com/tektoncd/pipeline/pkg/reconciler/testing"
 	"github.com/tektoncd/pipeline/test/diff"
+
+	"strings"
+	"testing"
+	"time"
 
 	"github.com/tektoncd/pipeline/test/names"
 	corev1 "k8s.io/api/core/v1"
@@ -36,9 +41,6 @@ import (
 	"knative.dev/pkg/controller"
 	"knative.dev/pkg/logging"
 	"knative.dev/pkg/reconciler"
-	"strings"
-	"testing"
-	"time"
 )
 
 func TestReconcileCelRun(t *testing.T) {
@@ -212,6 +214,21 @@ func TestReconcileCelRun(t *testing.T) {
 			}
 
 		})
+	}
+}
+
+func TestUnifyDoubleType(t *testing.T) {
+	// Verify type int converted to type double
+	test1 := unifyDoubleType(" 2.133 > 1 ")
+	test1Expected := "2.133 > 1.0"
+	if test1 != test1Expected {
+		t.Errorf("TestUnifyDoubleType Results: %s != %s", test1, test1Expected)
+	}
+	// Verify single variable expression stays the same
+	test2 := unifyDoubleType("true")
+	test2Expected := "true"
+	if test2 != test2Expected {
+		t.Errorf("TestUnifyDoubleType Results: %s != %s", test2, test2Expected)
 	}
 }
 
