@@ -217,18 +217,18 @@ func TestReconcileCelRun(t *testing.T) {
 	}
 }
 
-func TestUnifyDoubleType(t *testing.T) {
+func TestUnifyType(t *testing.T) {
 	// Verify type int converted to type double
-	test1 := unifyDoubleType(" 2.133 > 1 ")
+	test1 := unifyType(" 2.133 > 1 ")
 	test1Expected := "2.133 > 1.0"
 	if test1 != test1Expected {
-		t.Errorf("TestUnifyDoubleType Results: %s != %s", test1, test1Expected)
+		t.Errorf("TestUnifyType Results: %s != %s", test1, test1Expected)
 	}
 	// Verify single variable expression stays the same
-	test2 := unifyDoubleType("true")
+	test2 := unifyType("true")
 	test2Expected := "true"
 	if test2 != test2Expected {
-		t.Errorf("TestUnifyDoubleType Results: %s != %s", test2, test2Expected)
+		t.Errorf("TestUnifyType Results: %s != %s", test2, test2Expected)
 	}
 }
 
