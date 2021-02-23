@@ -172,9 +172,9 @@ func unifyType(StringVal string) string {
 	s := strings.Split(strings.TrimSpace(StringVal), " ")
 	validDouble := regexp.MustCompile(`[0-9]+.[0-9]+$`)
 	validInt := regexp.MustCompile(`[0-9]+$`)
-	// only convert to double type when it's a 3 word expression e.g. (x > y)
+	// only convert to double or string type when it's a 3 word expression e.g. (x > y)
 	if len(s) == 3 {
-		// If the giving string is not a vaild double or int, convert it to cel string
+		// If the given string is not a vaild double or int, convert it to cel string
 		if !(validDouble.MatchString(s[0]) || validInt.MatchString(s[0])) ||
 			!(validDouble.MatchString(s[2]) || validInt.MatchString(s[2])) {
 			s[0] = "\"" + strings.TrimSpace(s[0]) + "\""
