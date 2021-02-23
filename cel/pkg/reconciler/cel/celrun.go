@@ -170,8 +170,8 @@ func validateExpressionsType(run *v1alpha1.Run) (errs *apis.FieldError) {
 
 func unifyType(StringVal string) string {
 	s := strings.Split(strings.TrimSpace(StringVal), " ")
-	validDouble := regexp.MustCompile(`[0-9]+.[0-9]+$`)
-	validInt := regexp.MustCompile(`[0-9]+$`)
+	validDouble := regexp.MustCompile(`[-]?[0-9]+.[0-9]+$`)
+	validInt := regexp.MustCompile(`[-]?[0-9]+$`)
 	// only convert to double or string type when it's a 3 word expression e.g. (x > y)
 	if len(s) == 3 {
 		// If the given string is not a vaild double or int, convert it to cel string

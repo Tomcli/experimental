@@ -237,6 +237,10 @@ func TestUnifyType(t *testing.T) {
 		// check int equals to double
 		input:          "2.0 == 2",
 		expectedOutput: "2.0 == 2.0",
+	}, {
+		// check negative number
+		input:          "-2.0 == -2",
+		expectedOutput: "-2.0 == -2.0",
 	}}
 	for _, tc := range testcases {
 		testOuput := unifyType(tc.input)
